@@ -73,10 +73,7 @@ services:
     networks:
       - shms_network
     restart: unless-stopped
-    volumes:
-      # Optional: Mount for development hot-reload
-      # - ./Backend:/app
-      # - /app/node_modules
+    # no volume mounts by default; enable for development if needed
 
   # ==========================================
   # Frontend UI (React)
@@ -87,8 +84,8 @@ services:
       dockerfile: Dockerfile
     container_name: shms_frontend
     environment:
-      REACT_APP_BASE_URL: http://backend:3007
-      VITE_APP_BASE_URL: http://backend:3007
+      REACT_APP_BASE_URL: http://localhost:3007
+      VITE_APP_BASE_URL: http://localhost:3007
       CI: false
     ports:
       - "3000:3000"

@@ -26,7 +26,9 @@ const resolveHost = async () => {
         console.log(`✅ Resolved ${originalHost} to ${resolvedHost}`);
         resolve(resolvedHost);
       } else {
-        console.warn(`⚠️ DNS resolution failed for ${originalHost}, using original hostname.`);
+        console.warn(
+          `⚠️ DNS resolution failed for ${originalHost}, using original hostname.`,
+        );
         resolve(originalHost);
       }
     });
@@ -42,17 +44,21 @@ const createPool = async () => {
     poolPromise = (async () => {
       const originalHost = process.env.PG_HOST || "localhost";
       const resolvedHost = await resolveHost();
+      const sslEnabled =
+        config.ssl &&
+        config.ssl !== false &&
+        originalHost !== "localhost" &&
+        originalHost !== "127.0.0.1";
 
       const poolConfig = {
         ...config,
         host: resolvedHost,
-        ssl:
-          originalHost !== "localhost" && originalHost !== "127.0.0.1"
-            ? {
-                rejectUnauthorized: false,
-                servername: originalHost,
-              }
-            : false,
+        ssl: sslEnabled
+          ? {
+              rejectUnauthorized: false,
+              servername: originalHost,
+            }
+          : false,
         connectionTimeoutMillis: 10000,
         max: 20,
         idleTimeoutMillis: 30000,

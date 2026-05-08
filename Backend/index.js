@@ -5,14 +5,16 @@ const cors = require("cors");
 
 // DNS Resolution Fix for Neon/IPv6 issues
 const resolveHost = async () => {
-  if (process.env.PG_HOST && process.env.PG_HOST !== 'localhost') {
+  if (process.env.PG_HOST && process.env.PG_HOST !== "localhost") {
     return new Promise((resolve) => {
       dns.resolve4(process.env.PG_HOST, (err, addresses) => {
         if (!err && addresses && addresses.length > 0) {
           console.log(`✅ Resolved ${process.env.PG_HOST} to ${addresses[0]}`);
           process.env.RESOLVED_PG_HOST = addresses[0];
         } else {
-          console.warn(`⚠️ DNS resolution failed for ${process.env.PG_HOST}, using original hostname.`);
+          console.warn(
+            `⚠️ DNS resolution failed for ${process.env.PG_HOST}, using original hostname.`,
+          );
         }
         resolve();
       });
@@ -21,7 +23,20 @@ const resolveHost = async () => {
 };
 
 // Defer requires that depend on DB until after resolution
-let authRouter, adminRouter, publicRouter, reportRouter, appointmentRouter, doctorRouter, patientRouter, reportsRouter, nurseRouter, certificateRouter, labTechRouter, labRouter, aiRouter, db;
+let authRouter,
+  adminRouter,
+  publicRouter,
+  reportRouter,
+  appointmentRouter,
+  doctorRouter,
+  patientRouter,
+  reportsRouter,
+  nurseRouter,
+  certificateRouter,
+  labTechRouter,
+  labRouter,
+  aiRouter,
+  db;
 
 const app = express();
 
@@ -52,17 +67,21 @@ const startServer = async () => {
 
   db = require("./configs/db");
 
-// Import table creation functions
-// const { createTables: createAdminTables } = require("./models/Admin.model");
-const { createTables: createDoctorTables } = require("./models/Doctor.model");
-const { createTable: createPatientTable } = require("./models/Patient.model");
-// const { createTable: createAmbulanceTable } = require("./models/Ambulance.model");
-const { createTables: createNurseTables } = require("./models/Nurses.model");
-const { createTable: createQueueTable } = require("./models/Queue.model");
-const { createTables: createLabTechTables } = require("./models/LabTechnologist.model");
-const { createTables: createLabTables } = require("./models/Lab.model");
-const { createTable: createAppointmentTable } = require("./models/Appointment.model");
-const { createTables: createReportTable } = require("./models/Report.model");
+  // Import table creation functions
+  // const { createTables: createAdminTables } = require("./models/Admin.model");
+  const { createTables: createDoctorTables } = require("./models/Doctor.model");
+  const { createTable: createPatientTable } = require("./models/Patient.model");
+  // const { createTable: createAmbulanceTable } = require("./models/Ambulance.model");
+  const { createTables: createNurseTables } = require("./models/Nurses.model");
+  const { createTable: createQueueTable } = require("./models/Queue.model");
+  const {
+    createTables: createLabTechTables,
+  } = require("./models/LabTechnologist.model");
+  const { createTables: createLabTables } = require("./models/Lab.model");
+  const {
+    createTable: createAppointmentTable,
+  } = require("./models/Appointment.model");
+  const { createTables: createReportTable } = require("./models/Report.model");
 
   app.use(express.json());
   app.use(cors());
@@ -79,12 +98,21 @@ const { createTables: createReportTable } = require("./models/Report.model");
 
   // Table Initializers
   const { initialize: initializeStaffTable } = require("./models/Staff.model");
-  const { initialize: initializeAuditLogsTable } = require("./models/AuditLog.model");
-  const { initialize: initializeConfigTable } = require("./models/Config.model");
-  const { initialize: initializeQueueTable } = require("./models/Queue.model");
-  const { initialize: initializeReportsTable } = require("./models/Report.model");
-  const { initialize: initializeCertificateTable } = require("./models/Certificate.model");
-  const { initialize: initializeAIChatTables } = require("./models/AIChat.model");
+  const {
+    initialize: initializeAuditLogsTable,
+  } = require("./models/AuditLog.model");
+  const {
+    initialize: initializeConfigTable,
+  } = require("./models/Config.model");
+  const {
+    initialize: initializeReportsTable,
+  } = require("./models/Report.model");
+  const {
+    initialize: initializeCertificateTable,
+  } = require("./models/Certificate.model");
+  const {
+    initialize: initializeAIChatTables,
+  } = require("./models/AIChat.model");
   // app.use("/ambulances", ambulanceRouter);
   app.use("/appointments", appointmentRouter);
   app.use("/doctors", doctorRouter);
@@ -98,7 +126,6 @@ const { createTables: createReportTable } = require("./models/Report.model");
   app.use("/lab", labRouter);
   app.use("/ai", aiRouter);
 
-
   app.listen(process.env.PORT || 3007, async () => {
     try {
       console.log("📡 Connecting to database...");
@@ -106,11 +133,11 @@ const { createTables: createReportTable } = require("./models/Report.model");
       console.log("Connected to the database at", result.rows[0].now);
       console.log("Connected to DB successfully");
 
-      // Initialize only the core tables
-      await logInitStep("Staff table", initializeStaffTable);
+      await logInitStep("Doctor tables", createDoctorTables);
+      await logInitStep("Patient table", createPatientTable);
+      await logInitStep("Staff table", () => initializeStaffTable(true));
       await logInitStep("Audit Logs table", initializeAuditLogsTable);
       await logInitStep("System Config table", initializeConfigTable);
-      await logInitStep("Queue table", initializeQueueTable);
       await logInitStep("Reports table", initializeReportsTable);
       await logInitStep("Certificates table", initializeCertificateTable);
       await logInitStep("AI chat tables", initializeAIChatTables);
@@ -118,27 +145,27 @@ const { createTables: createReportTable } = require("./models/Report.model");
       // Schema cleanup: Ensure optional fields are nullable
       try {
         await db.query("ALTER TABLE patients ALTER COLUMN DOB DROP NOT NULL");
-        await db.query("ALTER TABLE patients ALTER COLUMN bloodGroup DROP NOT NULL");
-        await db.query("ALTER TABLE patients ALTER COLUMN allergies DROP NOT NULL");
+        await db.query(
+          "ALTER TABLE patients ALTER COLUMN bloodGroup DROP NOT NULL",
+        );
+        await db.query(
+          "ALTER TABLE patients ALTER COLUMN allergies DROP NOT NULL",
+        );
         console.log("✅ Schema constraints updated successfully");
       } catch (e) {
-        console.log("Note: Schema constraints update skipped or already applied");
+        console.log(
+          "Note: Schema constraints update skipped or already applied",
+        );
       }
 
       // Initialize tables
-      // await createAdminTables();
-      await logInitStep("Doctor tables", createDoctorTables);
-      await logInitStep("Patient table", createPatientTable);
-      // await createAmbulanceTable();
-      await logInitStep("Nurses table", createNurseTables);
       await logInitStep("Queue table", createQueueTable);
-      await logInitStep("Lab technologist tables", createLabTechTables);
+      // await createAdminTables();
+      // await createAmbulanceTable();
       await logInitStep("Lab tables", createLabTables);
       await logInitStep("Appointment table", createAppointmentTable);
-      await logInitStep("Report table", createReportTable);
 
       console.log("🎉 SHMS tables initialized successfully");
-
     } catch (err) {
       console.error("Error connecting to the database:", err);
     }
@@ -146,7 +173,7 @@ const { createTables: createReportTable } = require("./models/Report.model");
   });
 };
 
-startServer().catch(err => {
+startServer().catch((err) => {
   console.error("Failed to start server:", err);
   process.exit(1);
 });

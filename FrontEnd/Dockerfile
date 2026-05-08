@@ -15,6 +15,9 @@ RUN npm install
 
 # Copy source code
 COPY . .
+# Accept build-time API base URL and export to build environment
+ARG REACT_APP_BASE_URL
+ENV REACT_APP_BASE_URL=${REACT_APP_BASE_URL:-http://localhost:3007}
 
 # Build React app
 RUN npm run build
