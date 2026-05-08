@@ -1,0 +1,64 @@
+services:
+  # ============================================
+  # SHMS Backend API (Database on Neon)
+  # ============================================
+  - type: web
+    name: shms-backend
+    environment: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm install
+    startCommand: npm run start:render
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3007"
+      - key: PG_HOST
+        value: ""
+      - key: PG_USER
+        value: postgres
+      - key: PG_PASSWORD
+        value: ""
+      - key: PG_DATABASE
+        value: healthcare
+      - key: PG_PORT
+        value: "5432"
+      - key: PG_SSL
+        value: "true"
+      - key: KEY
+        generateValue: true
+      - key: OPENROUTER_API_KEY
+        value: ""
+      - key: CORS_ORIGIN
+        # Update this after deploying frontend to Vercel
+        # Example: https://your-frontend.vercel.app
+        value: ""
+      - key: SMTP_HOST
+        value: ""
+      - key: SMTP_PORT
+        value: ""
+      - key: SMTP_MAIL
+        value: ""
+      - key: SMTP_PASSWORD
+        value: ""
+    staticPublishPath: ./build
+    routes:
+      - path: /
+        matchType: prefix
+        priority: 0
+    numInstances: 1
+    healthCheckPath: /
+    healthCheckInterval: 10
+    healthCheckTimeout: 5
+    healthCheckUnhealthyThreshold: 3
+    diskSize: 1
+
+envVarGroups:
+  - name: Backend API Keys
+    envVars:
+      - key: OPENROUTER_API_KEY
+        value: ""
+      - key: OPENROUTER_MODEL
+        value: "openrouter/owl-alpha"

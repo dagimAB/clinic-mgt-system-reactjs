@@ -12,17 +12,25 @@
 
 #
 
-# PLATFORMS COVERED:
+# RECOMMENDED STACK (FASTEST):
 
-# 1. Render.com (EASIEST - START HERE)
+# - Frontend: Vercel
 
-# 2. Railway.app
+# - Backend: Render
 
-# 3. DigitalOcean
+# - Database: Neon PostgreSQL
 
-# 4. AWS
+#
 
-# 5. Docker Hub + Manual Deployment
+# OTHER PLATFORMS COVERED:
+
+# 1. Railway.app
+
+# 2. DigitalOcean
+
+# 3. AWS
+
+# 4. Docker Hub + Manual Deployment
 
 # ========================================
 
@@ -41,10 +49,14 @@
 
 2. **Generate Secure Credentials**
    - Create strong JWT key (32+ characters)
-   - Generate secure database password
    - Get OpenRouter API key (optional, for AI features)
 
-3. **Test Locally First**
+3. **Create Accounts (Free Tier)**
+   - Neon: https://neon.tech (PostgreSQL database)
+   - Render: https://render.com (Backend API)
+   - Vercel: https://vercel.com (Frontend)
+
+4. **Test Locally First**
    ```bash
    docker-compose up
    # Visit http://localhost:3007 and http://localhost:3000
@@ -52,18 +64,61 @@
 
 ---
 
-## ⭐ OPTION 1: RENDER.COM (EASIEST)
+## ⭐ RECOMMENDED: VERCEL + RENDER + NEON (EASIEST)
 
-### Why Render?
+**See [DEPLOY.md](./DEPLOY.md) for the quick 5-step guide.**
 
-- ✅ Free tier available
+This stack provides:
+
+- ✅ Free tier for all three services
+- ✅ Auto-deploy from GitHub (Vercel & Render)
+- ✅ Managed PostgreSQL (Neon)
+- ✅ Automatic table initialization on first boot
+- ✅ Best separation of concerns
+
+### Quick Path
+
+```bash
+# 1. Set up Neon database (2 min)
+# 2. Deploy backend to Render (5 min)
+# 3. Deploy frontend to Vercel (3 min)
+# 4. Update CORS origin (1 min)
+# Total: ~11 minutes
+```
+
+---
+
+## OPTION 1: RENDER.COM (WITH NEON DATABASE)
+
+### Why This Stack?
+
+- ✅ Free tier available on all services
 - ✅ Auto-deploy from GitHub
 - ✅ Built-in PostgreSQL
 - ✅ Environment variables UI
 - ✅ Simple scaling
 - ✅ One-click deployment
+- ✅ Automated database table initialization
 
-### Step-by-Step
+### ⚡ Quick Start (render.yaml)
+
+**NEW:** This repo includes a `render.yaml` file that automates most of the setup!
+
+1. Push this repo to GitHub
+2. Go to https://render.com/deploy?repo=YOUR_GITHUB_REPO_URL (replace YOUR_GITHUB_REPO_URL with your actual repo)
+3. Follow the prompts to authorize with GitHub
+4. Render will automatically:
+   - Create a PostgreSQL database
+   - Create the backend service
+   - Configure all environment variables
+   - Initialize database tables on first boot
+5. After deployment, update `CORS_ORIGIN` in the backend environment variables to point to your Vercel frontend
+
+✅ **Done!** Your backend is live.
+
+### Step-by-Step (Manual Setup)
+
+If you prefer manual setup instead of using render.yaml:
 
 #### 1. Create Render Account
 
