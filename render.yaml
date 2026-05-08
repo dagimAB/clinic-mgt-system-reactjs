@@ -43,13 +43,6 @@ services:
         value: ""
       - key: SMTP_PASSWORD
         value: ""
-    healthCheck:
-      path: /
-      interval: 10
-      timeout: 5
-      unhealthyThreshold: 3
-    disk:
-      size: 1
 
 envVarGroups:
   - name: Backend API Keys
