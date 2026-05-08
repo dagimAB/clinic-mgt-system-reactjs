@@ -40,6 +40,14 @@ let authRouter,
 
 const app = express();
 
+const corsOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const corsOptions = corsOrigins.length
+  ? { origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins }
+  : {};
+
 const logInitStep = async (label, initializer) => {
   console.log(`➡️ Initializing ${label}...`);
   await initializer();
@@ -84,7 +92,7 @@ const startServer = async () => {
   const { createTables: createReportTable } = require("./models/Report.model");
 
   app.use(express.json());
-  app.use(cors());
+  app.use(cors(corsOptions));
 
   app.get("/", (req, res) => {
     res.send("SHMS Backend - Centralized Auth Active");

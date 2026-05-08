@@ -1,21 +1,35 @@
 # ========================================
+
 # SHMS Deployment Guide
+
 # ========================================
+
 # This guide provides step-by-step instructions
+
 # to deploy the SHMS application to various
+
 # cloud platforms.
+
 #
+
 # PLATFORMS COVERED:
+
 # 1. Render.com (EASIEST - START HERE)
+
 # 2. Railway.app
+
 # 3. DigitalOcean
+
 # 4. AWS
+
 # 5. Docker Hub + Manual Deployment
+
 # ========================================
 
 ## BEFORE YOU START
 
 1. **Create GitHub Repository**
+
    ```bash
    cd clinic-mgt-system
    git init
@@ -41,6 +55,7 @@
 ## ⭐ OPTION 1: RENDER.COM (EASIEST)
 
 ### Why Render?
+
 - ✅ Free tier available
 - ✅ Auto-deploy from GitHub
 - ✅ Built-in PostgreSQL
@@ -51,10 +66,12 @@
 ### Step-by-Step
 
 #### 1. Create Render Account
+
 - Go to https://render.com
 - Sign up with GitHub (easiest)
 
 #### 2. Create PostgreSQL Database
+
 - Dashboard → New+ → PostgreSQL
 - **Name:** `shms-db`
 - **Database:** `healthcare`
@@ -62,6 +79,7 @@
 - **Copy the connection string** (you'll need it)
 
 #### 3. Create Backend Web Service
+
 - Dashboard → New+ → Web Service
 - **Select:** Deploy from GitHub
 - **Connect your repo:** `clinic-mgt-system`
@@ -74,6 +92,7 @@
   - Plan: `Free` (or paid for production)
 
 #### 4. Add Backend Environment Variables
+
 - In Web Service settings → Environment
 - Add these variables:
   ```
@@ -90,15 +109,18 @@
   ```
 
 #### 5. Deploy Backend
+
 - Click "Deploy" → wait 3-5 minutes
 - Check "http://shms-backend.onrender.com" (you'll get a custom URL)
 
 #### 6. Run Database Migrations
+
 - In Render dashboard, open your backend's shell
 - Run: `node createTable.js`
 - Run: `node seed.js`
 
 #### 7. Create Frontend Web Service
+
 - Dashboard → New+ → Web Service
 - **Select:** `clinic-mgt-system` GitHub repo
 - **Configuration:**
@@ -109,22 +131,32 @@
   - Branch: `main`
 
 #### 8. Add Frontend Environment Variables
-  ```
-  REACT_APP_BASE_URL=https://shms-backend.onrender.com
-  VITE_APP_BASE_URL=https://shms-backend.onrender.com
-  CI=false
-  ```
+
+```
+REACT_APP_BASE_URL=https://shms-backend.onrender.com
+VITE_APP_BASE_URL=https://shms-backend.onrender.com
+CI=false
+```
+
+#### 8b. Allow the Vercel frontend in the backend CORS list
+
+```
+CORS_ORIGIN=https://shms-frontend.vercel.app
+```
 
 #### 9. Deploy Frontend
+
 - Click "Deploy" → wait 5-7 minutes
 - Access frontend at `https://shms-frontend.onrender.com`
 
 #### 10. Test
+
 - ✅ Login with admin: `ADM-001` / (password from seed)
 - ✅ Check AI features if OpenRouter key added
 - ✅ Try creating appointments, viewing queue, etc.
 
 ### URL After Deployment
+
 ```
 Frontend: https://shms-frontend.onrender.com
 Backend:  https://shms-backend.onrender.com
@@ -136,6 +168,7 @@ Database: Managed by Render (no direct access needed)
 ## ⭐ OPTION 2: RAILWAY.APP
 
 ### Why Railway?
+
 - ✅ Very developer-friendly
 - ✅ Auto-deploy from GitHub
 - ✅ PostgreSQL built-in
@@ -145,26 +178,31 @@ Database: Managed by Render (no direct access needed)
 ### Step-by-Step
 
 #### 1. Create Railway Account
+
 - Go to https://railway.app
 - Sign up with GitHub
 
 #### 2. Create New Project
+
 - Click "New Project"
 - Select "Deploy from GitHub repo"
 - Choose `clinic-mgt-system`
 
 #### 3. Add PostgreSQL
+
 - Click "Add Service"
 - Select "PostgreSQL"
 - Railway auto-configures credentials
 
 #### 4. Configure Backend Service
+
 - Click "New Service"
 - Select "Docker"
 - Railway detects `Backend/Dockerfile`
 - Variables auto-filled from GitHub
 
 #### 5. Set Environment Variables
+
 - Click on Backend service
 - Variables tab
 - Add:
@@ -177,15 +215,18 @@ Database: Managed by Render (no direct access needed)
 - PostgreSQL variables auto-linked
 
 #### 6. Configure Frontend Service
+
 - Click "New Service"
 - Select "Docker"
 - Railway detects `FrontEnd/Dockerfile`
 
 #### 7. Deploy
+
 - Click "Deploy"
 - Railway auto-deploys when you push to GitHub
 
 #### 8. Run Migrations
+
 - Click Backend service → "Connect"
 - Run shell commands:
   ```bash
@@ -194,6 +235,7 @@ Database: Managed by Render (no direct access needed)
   ```
 
 ### URL After Deployment
+
 ```
 Generated automatically by Railway
 Example: https://your-project.railway.app
@@ -204,6 +246,7 @@ Example: https://your-project.railway.app
 ## ⭐ OPTION 3: DIGITALOCEAN APP PLATFORM
 
 ### Why DigitalOcean?
+
 - ✅ More control than Render/Railway
 - ✅ Good pricing ($12+)
 - ✅ Docker support
@@ -213,19 +256,21 @@ Example: https://your-project.railway.app
 ### Step-by-Step
 
 #### 1. Create DigitalOcean Account
+
 - Go to https://www.digitalocean.com
 - Sign up with GitHub
 
 #### 2. Create App
+
 - Apps → Create App
 - Select GitHub repo
 - Choose `clinic-mgt-system`
 
 #### 3. Configure Services
+
 - **Service 1: Backend**
   - Source: `Backend/Dockerfile`
   - HTTP Port: `3007`
-  
 - **Service 2: Frontend**
   - Source: `FrontEnd/Dockerfile`
   - HTTP Port: `3000`
@@ -235,6 +280,7 @@ Example: https://your-project.railway.app
   - Set database name to `healthcare`
 
 #### 4. Set Environment Variables
+
 - For Backend:
   ```
   NODE_ENV=production
@@ -243,10 +289,12 @@ Example: https://your-project.railway.app
   ```
 
 #### 5. Deploy
+
 - Click "Deploy"
 - Wait for all services to start
 
 #### 6. Access Application
+
 ```
 Backend:  https://backend-xxx.ondigitalocean.app
 Frontend: https://frontend-xxx.ondigitalocean.app
@@ -257,6 +305,7 @@ Frontend: https://frontend-xxx.ondigitalocean.app
 ## ⭐ OPTION 4: AWS EC2 + RDS (Most Control)
 
 ### Why AWS?
+
 - ✅ Maximum control
 - ✅ Production-grade infrastructure
 - ✅ Pay-as-you-go pricing
@@ -264,6 +313,7 @@ Frontend: https://frontend-xxx.ondigitalocean.app
 - ⚠️ Most complex setup
 
 ### Prerequisites
+
 - AWS account with billing setup
 - Basic Linux knowledge
 - SSH key pair created
@@ -271,6 +321,7 @@ Frontend: https://frontend-xxx.ondigitalocean.app
 ### Step-by-Step
 
 #### 1. Create RDS PostgreSQL Instance
+
 - AWS Console → RDS → Create Database
 - Engine: PostgreSQL 15
 - Instance: `db.t3.micro` (free tier eligible)
@@ -282,6 +333,7 @@ Frontend: https://frontend-xxx.ondigitalocean.app
 - VPC Security Group: Allow port 5432 from EC2
 
 #### 2. Launch EC2 Instance
+
 - AWS Console → EC2 → Launch Instance
 - AMI: Ubuntu 22.04 LTS (free tier eligible)
 - Instance type: `t3.micro`
@@ -290,11 +342,13 @@ Frontend: https://frontend-xxx.ondigitalocean.app
 - Storage: 30 GB
 
 #### 3. SSH into EC2
+
 ```bash
 ssh -i your-key.pem ubuntu@your-ec2-public-ip
 ```
 
 #### 4. Install Prerequisites
+
 ```bash
 # Update system
 sudo apt update && sudo apt upgrade -y
@@ -315,12 +369,14 @@ sudo sh get-docker.sh
 ```
 
 #### 5. Clone Repository
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/clinic-mgt-system.git
 cd clinic-mgt-system
 ```
 
 #### 6. Setup Backend
+
 ```bash
 cd Backend
 npm install
@@ -349,6 +405,7 @@ pm2 save
 ```
 
 #### 7. Setup Frontend
+
 ```bash
 cd ../FrontEnd
 npm install
@@ -367,11 +424,13 @@ sudo cp -r build /var/www/shms-frontend
 ```
 
 #### 8. Configure nginx
+
 ```bash
 sudo nano /etc/nginx/sites-available/default
 ```
 
 Add this config:
+
 ```nginx
 upstream backend {
     server 127.0.0.1:3007;
@@ -401,11 +460,13 @@ server {
 ```
 
 Then:
+
 ```bash
 sudo systemctl restart nginx
 ```
 
 #### 9. Access Application
+
 ```
 Frontend: http://your-ec2-public-ip
 Backend:  http://your-ec2-public-ip/api
@@ -418,11 +479,13 @@ Backend:  http://your-ec2-public-ip/api
 ### Build and Push to Docker Hub
 
 #### 1. Create Docker Hub Account
+
 - Go to https://hub.docker.com
 - Sign up
 - Create repository named `shms-backend`
 
 #### 2. Build and Push
+
 ```bash
 # Build
 docker build -t your-username/shms-backend:1.0 ./Backend
@@ -433,6 +496,7 @@ docker push your-username/shms-backend:1.0
 ```
 
 #### 3. Deploy from Docker Hub
+
 - Most cloud platforms support deploying from Docker Hub
 - Use image: `your-username/shms-backend:1.0`
 
@@ -470,12 +534,14 @@ docker push your-username/shms-backend:1.0
 ## 📊 MONITORING & LOGS
 
 ### Render
+
 ```bash
 # View logs in dashboard or:
 tail -f logs
 ```
 
 ### Railway
+
 ```bash
 # View logs in dashboard
 # Or use CLI:
@@ -483,6 +549,7 @@ railway logs
 ```
 
 ### AWS EC2
+
 ```bash
 # Backend logs
 pm2 logs
@@ -492,6 +559,7 @@ tail -f /var/log/syslog
 ```
 
 ### Docker
+
 ```bash
 docker-compose logs -f backend
 ```
@@ -501,31 +569,41 @@ docker-compose logs -f backend
 ## 🆘 TROUBLESHOOTING
 
 ### Issue: Database connection failed
+
 **Solutions:**
+
 - Check PG_HOST, PG_USER, PG_PASSWORD
 - Verify security groups allow connection
 - Ensure database is running
 - Check PG_SSL setting
 
 ### Issue: "relation ... does not exist"
+
 **Solution:**
+
 - Run `node createTable.js` in deployment environment
 
 ### Issue: Frontend can't reach backend
+
 **Solutions:**
+
 - Check REACT_APP_BASE_URL is correct
 - Verify CORS enabled in backend
 - Check firewall rules
 - Verify backend is running
 
 ### Issue: Authentication fails
+
 **Solutions:**
+
 - Check JWT KEY is set correctly
 - Verify admin exists: `node seed.js`
 - Check token expiry
 
 ### Issue: AI chat not working
+
 **Solutions:**
+
 - Check OPENROUTER_API_KEY is set
 - Verify API key has quota
 - Check model name
