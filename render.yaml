@@ -4,8 +4,9 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install
-    startCommand: npm run start:render
+    buildCommand: cd Backend && npm install
+    startCommand: cd Backend && npm run start:render
+    rootDir: Backend
     envVars:
       - key: NODE_ENV
         value: production
