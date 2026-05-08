@@ -4,10 +4,8 @@ services:
     runtime: node
     plan: free
     region: oregon
-    build:
-      command: npm install
-    start:
-      command: npm run start:render
+    buildCommand: npm install
+    startCommand: npm run start:render
     envVars:
       - key: NODE_ENV
         value: production
