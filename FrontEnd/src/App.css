@@ -1,0 +1,145 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
+
+:root {
+  --shms-bg: #f5f9fc;
+  --shms-bg-soft: #eef7fb;
+  --shms-surface: #ffffff;
+  --shms-surface-glass: rgba(255, 255, 255, 0.86);
+  --shms-surface-muted: #f8fbfd;
+  --shms-border: #d8e6ef;
+  --shms-border-strong: #bed2df;
+  --shms-text: #102a43;
+  --shms-text-muted: #587083;
+  --shms-primary: #0f6b8f;
+  --shms-primary-dark: #094c66;
+  --shms-primary-soft: #e4f5fb;
+  --shms-cyan: #13a6b5;
+  --shms-emerald: #15803d;
+  --shms-warning: #b45309;
+  --shms-danger: #b42318;
+  --shms-shadow-sm: 0 8px 20px rgba(15, 75, 105, 0.08);
+  --shms-shadow-md: 0 18px 44px rgba(15, 75, 105, 0.12);
+  --shms-shadow-lg: 0 28px 70px rgba(15, 75, 105, 0.16);
+  --shms-radius-sm: 8px;
+  --shms-radius-md: 12px;
+  --shms-radius-lg: 18px;
+  --shms-focus: 0 0 0 4px rgba(19, 166, 181, 0.2);
+  --shms-transition: 180ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(19, 166, 181, 0.12), transparent 32rem),
+    linear-gradient(180deg, #f7fbfd 0%, var(--shms-bg) 100%);
+  color: var(--shms-text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+[role="button"] {
+  transition:
+    background-color var(--shms-transition),
+    border-color var(--shms-transition),
+    color var(--shms-transition),
+    box-shadow var(--shms-transition),
+    transform var(--shms-transition);
+}
+
+a {
+  color: inherit;
+}
+
+input,
+select,
+textarea,
+.ant-input,
+.ant-select-selector {
+  border-radius: var(--shms-radius-sm) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible,
+a:focus-visible,
+.ant-input:focus,
+.ant-input-focused,
+.ant-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shms-focus) !important;
+}
+
+.ant-table-wrapper {
+  border-radius: var(--shms-radius-md);
+}
+
+.ant-table {
+  color: var(--shms-text);
+  background: transparent;
+}
+
+.ant-table-thead > tr > th {
+  background: var(--shms-surface-muted) !important;
+  color: #23465f !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid var(--shms-border) !important;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #edf3f7 !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f1f9fc !important;
+}
+
+.ant-pagination-item-active {
+  border-color: var(--shms-primary) !important;
+}
+
+.ant-pagination-item-active a {
+  color: var(--shms-primary) !important;
+}
+.inputdiv input::placeholder {
+  font-family: "Poppins", sans-serif;
+  opacity: 1; /* Firefox */
+}
+
+
+.inputdiv select {
+  display: block;
+  width: 100%;
+  /* Change the background color */
+  background-color: var(--shms-surface-muted);
+
+  /* Change the text color */
+  color: var(--shms-text);
+
+  /* Add any other styles you want */
+  border: 1px solid var(--shms-border);
+  padding: 10px 12px;
+  border-radius: var(--shms-radius-sm);
+}
+
+/* Change the color of the options */
+.inputdiv select option {
+  background-color: var(--shms-surface);
+  color: var(--shms-text);
+}

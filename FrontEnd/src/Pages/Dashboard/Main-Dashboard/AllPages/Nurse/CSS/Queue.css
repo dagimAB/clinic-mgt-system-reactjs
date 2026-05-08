@@ -1,0 +1,242 @@
+.queue-header-new {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.checkin-btn {
+  background-color: #1677ff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.checkin-btn:hover {
+  background-color: #0f5bcc;
+}
+
+.queue-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.queue-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-height: 500px;
+}
+
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.empty-msg {
+  color: #999;
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* Card Styles */
+.queue-card {
+  background: #fcfcfc;
+  border-left: 5px solid #ccc;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: grab;
+  transition: transform 0.2s;
+}
+.queue-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.queue-card.priority-normal { border-left-color: #2ecc71; }
+.queue-card.priority-urgent { border-left-color: #f1c40f; }
+.queue-card.priority-emergency { border-left-color: #e74c3c; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.student-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.priority-badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  color: white;
+}
+.priority-badge.normal { background-color: #2ecc71; }
+.priority-badge.urgent { background-color: #f1c40f; color: black}
+.priority-badge.emergency { background-color: #e74c3c; }
+
+.status-badge.assigned {
+  background-color: #1890ff;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.card-meta {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Assigned Card */
+.queue-card.assigned {
+  background-color: #e6f7ff;
+  border-left: 5px solid #1890ff;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn, .remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.edit-btn {
+  color: #1677ff;
+}
+
+.edit-btn:hover {
+  background: #e6f7ff;
+}
+
+.remove-btn {
+  color: #c0392b; /* Dark Red */
+}
+
+.remove-btn:hover {
+  background: #fadbd8;
+}
+
+
+/* Doctors Section */
+.doctor-grid {
+  display: grid;
+  gap: 15px;
+}
+
+.doctor-target-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px dashed #d9d9d9;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.doctor-target-card:hover {
+  border-color: #1677ff;
+  background-color: #f0f5ff;
+}
+
+.doc-info h4 {
+  margin: 0;
+  font-size: 14px;
+}
+.doc-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content-new {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.input-group input, .input-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+}
+
+.priority-btns {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.p-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #d9d9d9;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.p-btn:hover { background: #f5f5f5; }
+.p-btn.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+.submit-btn {
+  flex: 1;
+  background: #1677ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.cancel-btn {
+  background: white;
+  border: 1px solid #d9d9d9;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}

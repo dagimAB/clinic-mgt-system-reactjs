@@ -1,0 +1,20 @@
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization;
+  if (token) {
+    const decoded = jwt.verify(token, process.env.KEY);
+    if (decoded) {
+      req.user = decoded; // Standardize by putting decoded token in req.user
+      req.body.doctorID = decoded.id; // Maintain backward compatibility for some models
+      next();
+    } else {
+      res.send("You cannot edit this token.");
+    }
+  } else {
+    res.send("Inadequate permissions, Please login first.");
+  }
+};
+
+module.exports = { authenticate };

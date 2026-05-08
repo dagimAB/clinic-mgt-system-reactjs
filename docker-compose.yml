@@ -1,0 +1,113 @@
+# ============================================
+# SHMS - Complete Stack Docker Compose
+# ============================================
+# Usage:
+#   docker-compose up              # Run all services
+#   docker-compose up -d           # Run in background
+#   docker-compose down            # Stop all services
+#   docker-compose logs -f         # View logs
+#   docker-compose ps              # See running containers
+#
+# This file defines:
+# 1. PostgreSQL Database (localhost:5432)
+# 2. Backend API (localhost:3007)
+# 3. Frontend UI (localhost:3000)
+# ============================================
+
+version: "3.9"
+
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  db:
+    image: postgres:15-alpine
+    container_name: shms_postgres
+    environment:
+      POSTGRES_USER: ${PG_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-postgres}
+      POSTGRES_DB: ${PG_DATABASE:-healthcare}
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persistent storage for database
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shms_network
+    restart: unless-stopped
+
+  # ==========================================
+  # Backend API (Node.js + Express)
+  # ==========================================
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: shms_backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3007
+      PG_HOST: db
+      PG_USER: ${PG_USER:-postgres}
+      PG_PASSWORD: ${PG_PASSWORD:-postgres}
+      PG_DATABASE: ${PG_DATABASE:-healthcare}
+      PG_PORT: 5432
+      PG_SSL: false
+      KEY: ${KEY:-dev_secret_key_change_in_production}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/owl-alpha}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_MAIL: ${SMTP_MAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    ports:
+      - "3007:3007"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - shms_network
+    restart: unless-stopped
+    volumes:
+      # Optional: Mount for development hot-reload
+      # - ./Backend:/app
+      # - /app/node_modules
+
+  # ==========================================
+  # Frontend UI (React)
+  # ==========================================
+  frontend:
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
+    container_name: shms_frontend
+    environment:
+      REACT_APP_BASE_URL: http://backend:3007
+      VITE_APP_BASE_URL: http://backend:3007
+      CI: false
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - shms_network
+    restart: unless-stopped
+
+# ==========================================
+# Volumes (Persistent Data)
+# ==========================================
+volumes:
+  postgres_data:
+    driver: local
+
+# ==========================================
+# Networks (Container Communication)
+# ==========================================
+networks:
+  shms_network:
+    driver: bridge
