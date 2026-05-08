@@ -43,17 +43,13 @@ services:
         value: ""
       - key: SMTP_PASSWORD
         value: ""
-    staticPublishPath: ./build
-    routes:
-      - path: /
-        matchType: prefix
-        priority: 0
-    numInstances: 1
-    healthCheckPath: /
-    healthCheckInterval: 10
-    healthCheckTimeout: 5
-    healthCheckUnhealthyThreshold: 3
-    diskSize: 1
+    healthCheck:
+      path: /
+      interval: 10
+      timeout: 5
+      unhealthyThreshold: 3
+    disk:
+      size: 1
 
 envVarGroups:
   - name: Backend API Keys
