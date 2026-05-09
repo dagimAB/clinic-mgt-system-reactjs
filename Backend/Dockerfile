@@ -25,7 +25,7 @@ WORKDIR /app
 
 # Copy node_modules and app from builder
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app . .
+COPY --from=builder /app . 
 
 # Expose port
 EXPOSE 3007
