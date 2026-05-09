@@ -22,7 +22,9 @@ router.post("/login", async (req, res) => {
     // 2. Check if account is active
     if (user.is_active === false) {
       console.log(`Deactivated user attempted login: ${id}`);
-      return res.status(403).json({ message: "Account is deactivated. Please contact the administrator." });
+      return res.status(403).json({
+        message: "Account is deactivated. Please contact the administrator.",
+      });
     }
 
     console.log(`User found: ${user.name}, Role: ${user.role}`);
@@ -44,35 +46,54 @@ router.post("/login", async (req, res) => {
     // Frontend expects 'userType' and it should be lowercase (admin, doctor, etc)
     let userType = user.role.toLowerCase();
     if (userType === "lab_tech") userType = "lab_technologist";
-    
+
     // FETCH FULL PROFILE DATA BASED ON ROLE
     let fullUserProfile = { ...user, userType };
-    
+
     try {
-        if (userType === 'nurse') {
-            const { findById: findNurseById } = require("../models/Nurses.model");
-            const nurseData = await findNurseById(user.id);
-            if (nurseData && nurseData.length > 0) fullUserProfile = { ...fullUserProfile, ...nurseData[0] };
-        } else if (userType === 'doctor') {
-             const { findById: findDoctorById } = require("../models/Doctor.model");
-             // Doctor model might not have exported findById in the same way, let's check or use a direct query if needed.
-             // Usually Doctors have their own login, but for unified auth:
-             // Let's assume generic query for now or try to require.
-             // Safest is to just send what we have if specific model fetch fails or isn't implemented yet.
-             // But for Nurse and LabTech we know we added findById.
-        } else if (userType === 'lab_technologist') {
-             const { findById: findLabTechById } = require("../models/LabTechnologist.model");
-             const labData = await findLabTechById(user.id);
-             if (labData && labData.length > 0) fullUserProfile = { ...fullUserProfile, ...labData[0] };
-        }
+      if (userType === "nurse") {
+        const { findById: findNurseById } = require("../models/Nurses.model");
+        const nurseData = await findNurseById(user.id);
+        if (nurseData && nurseData.length > 0)
+          fullUserProfile = { ...fullUserProfile, ...nurseData[0] };
+      } else if (userType === "doctor") {
+        const { findById: findDoctorById } = require("../models/Doctor.model");
+        // Doctor model might not have exported findById in the same way, let's check or use a direct query if needed.
+        // Usually Doctors have their own login, but for unified auth:
+        // Let's assume generic query for now or try to require.
+        // Safest is to just send what we have if specific model fetch fails or isn't implemented yet.
+        // But for Nurse and LabTech we know we added findById.
+      } else if (userType === "lab_technologist") {
+        const {
+          findById: findLabTechById,
+        } = require("../models/LabTechnologist.model");
+        const labData = await findLabTechById(user.id);
+        if (labData && labData.length > 0)
+          fullUserProfile = { ...fullUserProfile, ...labData[0] };
+      }
     } catch (fetchErr) {
-        console.log(`Warning: Could not fetch full profile for ${user.id}: ${fetchErr.message}`);
+      console.log(
+        `Warning: Could not fetch full profile for ${user.id}: ${fetchErr.message}`,
+      );
+    }
+
+    // Ensure JWT secret is configured
+    if (!process.env.KEY) {
+      console.error(
+        "Auth error: JWT secret (KEY) is not configured in environment variables.",
+      );
+      return res
+        .status(500)
+        .json({
+          message: "Internal server error",
+          error: "JWT secret not configured",
+        });
     }
 
     const token = jwt.sign(
       { id: user.id, role: user.role, userType: userType, name: user.name },
       process.env.KEY,
-      { expiresIn: "24h" }
+      { expiresIn: "24h" },
     );
 
     console.log(`Login successful for: ${id} as ${userType}`);
@@ -82,7 +103,10 @@ router.post("/login", async (req, res) => {
       await updateLastLogin(user.id);
       console.log(`Successfully updated last_login for: ${user.id}`);
     } catch (dbErr) {
-      console.error(`Failed to update last_login for ${user.id}:`, dbErr.message);
+      console.error(
+        `Failed to update last_login for ${user.id}:`,
+        dbErr.message,
+      );
     }
 
     // 4. Return success
@@ -92,8 +116,11 @@ router.post("/login", async (req, res) => {
       user: fullUserProfile,
     });
   } catch (err) {
-    console.error("Login error:", err.message);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Login error:", err.stack || err.message);
+    // Expose a short error message to aid debugging (remove in production)
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 });
 
